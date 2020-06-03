@@ -1,6 +1,12 @@
 import React, {Component} from 'react';
 import './App.css';
 import Person from './Person/Person'
+import Radium, { StyleRoot } from 'radium';
+
+// to add feature of css like hover and al use radium 
+// and use under where we define style and wrap our component class/function with it
+
+
 
 //Functional based component with state using hooks.
 // import React, { useState } from 'react';
@@ -93,15 +99,9 @@ class App extends Component {
 
   }
 
-  btnStyle = {
-    backgroundColor: 'white',
-    font: 'inherit',
-    border: '3px solid blue',
-    padding: '8px',
-    cursor: 'pointer'
-  }
 
   toggleElements = () => {
+    
     this.setState(
       { toBeShown: !this.state.toBeShown }
     )
@@ -117,6 +117,19 @@ class App extends Component {
 
   render() {
 
+    const btnStyle = {
+      backgroundColor: 'green',
+      color: 'white',
+      font: 'inherit',
+      border: '1px solid blue',
+      padding: '8px',
+      cursor: 'pointer',
+      ':hover': {
+        backgroundColor: 'lightgreen',
+        color: 'black'
+      }
+    }
+
 
     let person = null
     if(this.state.toBeShown){
@@ -127,20 +140,35 @@ class App extends Component {
           })}
         </div>
       )
+      btnStyle.backgroundColor = "red"
+      btnStyle[':hover'] = {
+        backgroundColor: 'salmon',
+        color: 'black'
+      }
     }
-
+    //Dynamically adding classs to component
+    const classes = []
+    if(this.state.Person.length <=2){
+      classes.push('red')
+    }
+    if(this.state.Person.length <=1){
+      classes.push('bold')
+    }
+    
     return (
-          <div className="App">
-            <h1>I'm a React APP</h1>
-            <p>Hello this demo project</p>
-            <button style={this.btnStyle} onClick = {this.toggleElements}>Hello</button>
-            { person }        
-            </div>
-        );
+      <StyleRoot>
+        <div className="App">
+          <h1>I'm a React APP</h1>
+          <p className = {classes.join(' ')}>Hello this demo project</p>
+          <button style={btnStyle} onClick = {this.toggleElements}>Toggle Person</button>
+          { person }        
+        </div>
+      </StyleRoot>
+    );
   }
 }
 
-export default App
+export default Radium(App)
 
 // method to return a value inside render but not preferable
 // preferable method is to create a variable and store dat to to be shown after render
