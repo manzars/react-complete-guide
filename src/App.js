@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './App.css';
 import Person from './Person/Person'
 import Radium, { StyleRoot } from 'radium';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary'
 
 // to add feature of css like hover and al use radium 
 // and use under where we define style and wrap our component class/function with it
@@ -136,7 +137,11 @@ class App extends Component {
       person = (
         <div>
           {this.state.Person.map((person, index) => {
-            return <Person nameChanged = {(event) => this.nameChange(event, person.id)} key = {person.id} onHello = {this.deletePerson} name = {person.name} age = {person.age}/>
+            return (
+              <ErrorBoundary key = {person.id}>
+                <Person nameChanged = {(event) => this.nameChange(event, person.id)} onHello = {this.deletePerson} name = {person.name} age = {person.age}/>
+              </ErrorBoundary>
+            )
           })}
         </div>
       )
@@ -154,6 +159,9 @@ class App extends Component {
     if(this.state.Person.length <=1){
       classes.push('bold')
     }
+    // if(Math.random() > 0.7){
+    //   throw new Error("Ahh here we go again")
+    // }
     
     return (
       <StyleRoot>

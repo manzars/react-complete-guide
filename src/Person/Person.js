@@ -8,7 +8,7 @@ const Person = (props) => {
 
     const styl = {
         '@media (min-width: 500px)': {
-          width: '400px'
+          width: '400px',
         }
     }
 
