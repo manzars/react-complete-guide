@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import './App.css';
-import Person from './Person/Person'
+import Persons from '../Components/Persons/Persons'
 import Radium, { StyleRoot } from 'radium';
-import ErrorBoundary from './ErrorBoundary/ErrorBoundary'
+import Cockpit from '../Components/Cockpit/Cockpit'
+import authContext from './contex/auth-contex'
 
 // to add feature of css like hover and al use radium 
 // and use under where we define style and wrap our component class/function with it
@@ -74,7 +75,10 @@ class App extends Component {
         age: 14,
         id: 3
       }
-    ],toBeShown: false
+    ],
+    toBeShown: false,
+    changeCounter: 0,
+    isAuthenticated: false
   }
 
   onClick = (name) =>{
@@ -96,8 +100,13 @@ class App extends Component {
       }
       return person
 
-    })})
+    }), changeCounter: this.state.changeCounter + 1})
 
+  }
+
+  loginHandler = () => {
+    this.setState({isAuthenticated: true})
+    console.log(this.state.isAuthenticated)
   }
 
 
@@ -118,47 +127,20 @@ class App extends Component {
 
   render() {
 
-    const btnStyle = {
-      backgroundColor: 'green',
-      color: 'white',
-      font: 'inherit',
-      border: '1px solid blue',
-      padding: '8px',
-      cursor: 'pointer',
-      ':hover': {
-        backgroundColor: 'lightgreen',
-        color: 'black'
-      }
-    }
-
-
     let person = null
     if(this.state.toBeShown){
       person = (
-        <div>
-          {this.state.Person.map((person, index) => {
-            return (
-              <ErrorBoundary key = {person.id}>
-                <Person nameChanged = {(event) => this.nameChange(event, person.id)} onHello = {this.deletePerson} name = {person.name} age = {person.age}/>
-              </ErrorBoundary>
-            )
-          })}
+      <div>
+          <Persons
+            Person = {this.state.Person}
+            nameChange={this.nameChange}
+            deletePerson={this.deletePerson}
+            auth = {this.state.isAuthenticated}
+          />
         </div>
       )
-      btnStyle.backgroundColor = "red"
-      btnStyle[':hover'] = {
-        backgroundColor: 'salmon',
-        color: 'black'
-      }
     }
-    //Dynamically adding classs to component
-    const classes = []
-    if(this.state.Person.length <=2){
-      classes.push('red')
-    }
-    if(this.state.Person.length <=1){
-      classes.push('bold')
-    }
+    
     // if(Math.random() > 0.7){
     //   throw new Error("Ahh here we go again")
     // }
@@ -166,10 +148,16 @@ class App extends Component {
     return (
       <StyleRoot>
         <div className="App">
-          <h1>I'm a React APP</h1>
-          <p className = {classes.join(' ')}>Hello this demo project</p>
-          <button style={btnStyle} onClick = {this.toggleElements}>Toggle Person</button>
-          { person }        
+          <authContext.Provider value = {{authenticated: this.state.isAuthenticated, login: this.loginHandler}}>
+            <Cockpit 
+              title = {this.props.title}
+              Persons = {this.state.Person}
+              toggleElements = { this.toggleElements }
+              person = {person}
+              toBeShown = {this.state.toBeShown}
+              login = {this.loginHandler}
+            />  
+          </authContext.Provider>     
         </div>
       </StyleRoot>
     );
